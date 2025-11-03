@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calcolatore "What If" Fantacalcio</title>
     <link rel="stylesheet" href="styles/style.css">
 </head>
+
 <body>
 
     <header>
         <h1>Calcolatore "What If" Fantacalcio</h1>
-        <p class="subtitle">Scambia la posizione di due squadre nel calendario e scopri come sarebbe cambiata la classifica finale mantenendo gli stessi punteggi ma cambiando gli avversari.</p>
+        <p class="subtitle">Scambia la posizione di due squadre nel calendario e scopri come sarebbe cambiata la
+            classifica finale mantenendo gli stessi punteggi ma cambiando gli avversari.</p>
     </header>
 
     <div class="step-indicator">
@@ -30,18 +33,20 @@
 
     <div class="card">
         <h2>1. Inserisci i Punteggi (8 Squadre)</h2>
-        <p>Incolla i punteggi (36 per squadra). <strong>Formato (CSV):</strong> <code>NomeSquadra,puntiG1,puntiG2,puntiG3...</code><br>
-           Assicurati che non ci siano spazi vuoti e che i decimali usino il punto (es. <code>68.5</code>).</p>
-        
+        <p>Incolla i punteggi (36 per squadra). <strong>Formato (CSV):</strong>
+            <code>NomeSquadra,puntiG1,puntiG2,puntiG3...</code><br>
+            Assicurati che non ci siano spazi vuoti e che i decimali usino il punto (es. <code>68.5</code>).
+        </p>
+
         <div class="code-example">SquadraA,70.5,65.0,78.0, ... (altri punteggi)
-SquadraB,68.0,72.0,66.0, ...
-SquadraC,60.0,71.5,73.0, ...
-SquadraD,75.0,66.5,69.0, ...
-SquadraE,63.0,77.0,80.0, ...
-SquadraF,71.0,72.5,61.0, ...
-SquadraG,66.0,67.0,73.5, ...
-SquadraH,69.5,70.0,71.0, ...</div>
-        
+            SquadraB,68.0,72.0,66.0, ...
+            SquadraC,60.0,71.5,73.0, ...
+            SquadraD,75.0,66.5,69.0, ...
+            SquadraE,63.0,77.0,80.0, ...
+            SquadraF,71.0,72.5,61.0, ...
+            SquadraG,66.0,67.0,73.5, ...
+            SquadraH,69.5,70.0,71.0, ...</div>
+
         <div class="input-group">
             <textarea id="scoresInput" placeholder="SquadraA,70.5,65.0,78.0, ... (altri punteggi)
 SquadraB,68.0,72.0,66.0, ...
@@ -54,13 +59,15 @@ SquadraH,69.5,70.0,71.0, ..."></textarea>
         </div>
 
         <h2>2. Inserisci il Calendario (36 Giornate)</h2>
-        <p>Incolla il calendario (4 partite per giornata). <strong>Formato (CSV):</strong> <code>G1,Casa1,Ospite1,Casa2,Ospite2,Casa3,Ospite3,Casa4,Ospite4</code><br>
-           I nomi delle squadre devono corrispondere *esattamente* a quelli usati sopra.</p>
-        
+        <p>Incolla il calendario (4 partite per giornata). <strong>Formato (CSV):</strong>
+            <code>G1,Casa1,Ospite1,Casa2,Ospite2,Casa3,Ospite3,Casa4,Ospite4</code><br>
+            I nomi delle squadre devono corrispondere *esattamente* a quelli usati sopra.
+        </p>
+
         <div class="code-example">G1,SquadraA,SquadraB,SquadraC,SquadraD,SquadraE,SquadraF,SquadraG,SquadraH
-G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
-... (fino a G36)</div>
-        
+            G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
+            ... (fino a G36)</div>
+
         <div class="input-group">
             <textarea id="calendarInput" placeholder="G1,SquadraA,SquadraB,SquadraC,SquadraD,SquadraE,SquadraF,SquadraG,SquadraH
 G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
@@ -68,14 +75,15 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
         </div>
 
         <button id="loadDataButton" class="btn">Carica e Valida i Dati</button>
-        
+
         <div id="error-log"></div>
     </div>
 
     <div class="card">
         <h2>3. Simula lo "Swap"</h2>
-        <p>Una volta caricati i dati, apparirà la classifica originale. Seleziona le due squadre da scambiare e ricalcola.</p>
-        
+        <p>Una volta caricati i dati, apparirà la classifica originale. Seleziona le due squadre da scambiare e
+            ricalcola.</p>
+
         <div class="swap-controls">
             <select id="team1Select" disabled>
                 <option value="">Seleziona squadra 1</option>
@@ -85,7 +93,7 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
                 <option value="">Seleziona squadra 2</option>
             </select>
         </div>
-        
+
         <button id="calculateButton" class="btn" disabled>Simula Classifica con Swap</button>
     </div>
 
@@ -100,7 +108,11 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
         </div>
     </div>
 
-<script>
+    <footer style="text-align: center; padding: 2rem; color: #999999; margin-top: 3rem; border-top: 1px solid #333333;">
+        <p style="font-size: 0.9rem; font-weight: 500;">Fatto da Fabio Rovituso</p>
+    </footer>
+
+    <script>
         // Variabili globali per memorizzare i dati parsati
         let parsedScores = {};
         let parsedCalendar = [];
@@ -130,14 +142,14 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
                 teamNames = [];
                 const scoreLines = scoresText.split('\n');
                 if (scoreLines.length !== NUM_TEAMS) throw new Error(`Errore Punteggi: Trovate ${scoreLines.length} squadre, ma ne servono ${NUM_TEAMS}.`);
-                
+
                 scoreLines.forEach((line, index) => {
                     const parts = line.split(',');
                     const name = parts.shift().trim();
                     if (!name) throw new Error(`Errore Punteggi: Nome squadra mancante alla riga ${index + 1}.`);
-                    
+
                     if (parts.length !== NUM_ROUNDS) throw new Error(`Errore Punteggi [${name}]: Trovati ${parts.length} punteggi, ma ne servono ${NUM_ROUNDS}.`);
-                    
+
                     parsedScores[name] = parts.map(p => parseFloat(p));
                     teamNames.push(name);
                 });
@@ -150,14 +162,14 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
                 calendarLines.forEach((line, index) => {
                     const parts = line.split(',');
                     const giornataLabel = parts.shift().trim(); // Rimuove G1, G2, etc.
-                    
+
                     if (parts.length !== NUM_TEAMS) throw new Error(`Errore Calendario [${giornataLabel}]: Trovate ${parts.length} squadre, ma ne servono ${NUM_TEAMS} (4 partite).`);
-                    
+
                     const round = [];
                     for (let i = 0; i < parts.length; i += 2) {
                         const casa = parts[i].trim();
-                        const ospite = parts[i+1].trim();
-                        
+                        const ospite = parts[i + 1].trim();
+
                         // Validazione nomi calendario
                         if (!teamNames.includes(casa)) throw new Error(`Errore Calendario [${giornataLabel}]: Squadra "${casa}" non trovata nell'elenco punteggi.`);
                         if (!teamNames.includes(ospite)) throw new Error(`Errore Calendario [${giornataLabel}]: Squadra "${ospite}" non trovata nell'elenco punteggi.`);
@@ -166,19 +178,19 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
                     }
                     parsedCalendar.push(round);
                 });
-                
+
                 // 3. Se tutto OK, popola i selettori e calcola l'originale
                 populateSelectors();
-                
+
                 const originalClassifica = runFullSeason(parsedCalendar, parsedScores);
                 renderTable(originalClassifica, 'originalTable');
-                
+
                 // Pulisci la tabella simulata e attiva i controlli
                 document.getElementById('simulatedTable').innerHTML = '';
                 document.getElementById('calculateButton').disabled = false;
                 document.getElementById('team1Select').disabled = false;
                 document.getElementById('team2Select').disabled = false;
-                
+
             } catch (error) {
                 // Se qualcosa va male, mostra l'errore
                 errorLog.textContent = error.message;
@@ -209,7 +221,7 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
                 opt2.textContent = team;
                 sel2.appendChild(opt2);
             });
-            
+
             // Pre-seleziona la seconda squadra per evitare che siano uguali
             if (teamNames.length > 1) {
                 sel2.selectedIndex = 1;
@@ -252,7 +264,7 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
         function calcolaGoal(punti) {
             if (punti === 0) return 0; // Partita non giocata
             if (punti < 66) return 0;
-            
+
             // Calcola correttamente: 66 = 1 gol, 72 = 2 gol, 78 = 3 gol, etc.
             // Sottrai 66 per trovare quanti "blocchi da 6 punti" oltre il primo gol
             return 1 + Math.floor((punti - 66) / 6);
@@ -265,9 +277,9 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
         function calcolaPartita(puntiCasa, puntiOspite) {
             // Se entrambi i punteggi sono 0, la partita non è stata giocata
             if (puntiCasa === 0 && puntiOspite === 0) {
-                return { 
-                    casa: { pts: 0, gf: 0, ga: 0 }, 
-                    ospite: { pts: 0, gf: 0, ga: 0 } 
+                return {
+                    casa: { pts: 0, gf: 0, ga: 0 },
+                    ospite: { pts: 0, gf: 0, ga: 0 }
                 };
             }
 
@@ -275,20 +287,20 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
             const goalOspite = calcolaGoal(puntiOspite);
 
             if (goalCasa > goalOspite) {
-                return { 
-                    casa: { pts: 3, gf: goalCasa, ga: goalOspite }, 
-                    ospite: { pts: 0, gf: goalOspite, ga: goalCasa } 
+                return {
+                    casa: { pts: 3, gf: goalCasa, ga: goalOspite },
+                    ospite: { pts: 0, gf: goalOspite, ga: goalCasa }
                 };
             } else if (goalCasa < goalOspite) {
-                return { 
-                    casa: { pts: 0, gf: goalCasa, ga: goalOspite }, 
-                    ospite: { pts: 3, gf: goalOspite, ga: goalCasa } 
+                return {
+                    casa: { pts: 0, gf: goalCasa, ga: goalOspite },
+                    ospite: { pts: 3, gf: goalOspite, ga: goalCasa }
                 };
             } else {
                 // Pareggio
-                return { 
-                    casa: { pts: 1, gf: goalCasa, ga: goalOspite }, 
-                    ospite: { pts: 1, gf: goalOspite, ga: goalCasa } 
+                return {
+                    casa: { pts: 1, gf: goalCasa, ga: goalOspite },
+                    ospite: { pts: 1, gf: goalOspite, ga: goalCasa }
                 };
             }
         }
@@ -299,8 +311,8 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
         function runFullSeason(calendar, scores) {
             // Inizializza la classifica
             const classifica = {};
-            teamNames.forEach(team => { 
-                classifica[team] = { pts: 0, gf: 0, ga: 0 }; 
+            teamNames.forEach(team => {
+                classifica[team] = { pts: 0, gf: 0, ga: 0 };
             });
 
             // Itera su tutte le 36 giornate
@@ -383,11 +395,11 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
 
             let html = '<table>';
             html += '<tr><th>Pos</th><th>Squadra</th><th>Punti</th><th>GF</th><th>GS</th><th>DR</th></tr>';
-            
+
             sorted.forEach((entry, index) => {
                 const [teamName, stats] = entry;
                 const dr = stats.gf - stats.ga;
-                
+
                 html += `<tr>
                             <td>${index + 1}</td>
                             <td>${teamName}</td>
@@ -405,4 +417,5 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
     </script>
 
 </body>
+
 </html>
