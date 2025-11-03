@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolatore "What If" Fantacalcio</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 20px;
+        }
+        .step-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .step.active .step-circle {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .step-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .code-example {
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+        }
+        .input-group {
+            margin: 15px 0;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            resize: vertical;
+        }
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .swap-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-width: 200px;
+        }
+        .swap-icon {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        #error-log {
+            color: #d32f2f;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #ffebee;
+            border-radius: 4px;
+            display: none;
+        }
+        .results-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f8f8f8;
+            font-weight: bold;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Calcolatore "What If" Fantacalcio</h1>
+        <p class="subtitle">Scambia la posizione di due squadre nel calendario e scopri come sarebbe cambiata la classifica finale mantenendo gli stessi punteggi ma cambiando gli avversari.</p>
+    </header>
+
+    <div class="step-indicator">
+        <div class="step active">
+            <div class="step-circle">1</div>
+            <div class="step-label">Inserisci Dati</div>
+        </div>
+        <div class="step">
+            <div class="step-circle">2</div>
+            <div class="step-label">Simula Swap</div>
+        </div>
+        <div class="step">
+            <div class="step-circle">3</div>
+            <div class="step-label">Risultati</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>1. Inserisci i Punteggi (8 Squadre)</h2>
+        <p>Incolla i punteggi (35 per squadra). <strong>Formato (CSV):</strong> <code>NomeSquadra,puntiG1,puntiG2,puntiG3...</code><br>
+           Assicurati che non ci siano spazi vuoti e che i decimali usino il punto (es. <code>68.5</code>).</p>
+        
+        <div class="code-example">SquadraA,70.5,65.0,78.0, ... (altri 32 punteggi)
+SquadraB,68.0,72.0,66.0, ...
+SquadraC,60.0,71.5,73.0, ...
+SquadraD,75.0,66.5,69.0, ...
+SquadraE,63.0,77.0,80.0, ...
+SquadraF,71.0,72.5,61.0, ...
+SquadraG,66.0,67.0,73.5, ...
+SquadraH,69.5,70.0,71.0, ...</div>
+        
+        <div class="input-group">
+            <textarea id="scoresInput" placeholder="SquadraA,70.5,65.0,78.0, ... (altri 32 punteggi)
+SquadraB,68.0,72.0,66.0, ...
+SquadraC,60.0,71.5,73.0, ...
+SquadraD,75.0,66.5,69.0, ...
+SquadraE,63.0,77.0,80.0, ...
+SquadraF,71.0,72.5,61.0, ...
+SquadraG,66.0,67.0,73.5, ...
+SquadraH,69.5,70.0,71.0, ..."></textarea>
+        </div>
+
+        <h2>2. Inserisci il Calendario (35 Giornate)</h2>
+        <p>Incolla il calendario (4 partite per giornata). <strong>Formato (CSV):</strong> <code>G1,Casa1,Ospite1,Casa2,Ospite2,Casa3,Ospite3,Casa4,Ospite4</code><br>
+           I nomi delle squadre devono corrispondere *esattamente* a quelli usati sopra.</p>
+        
+        <div class="code-example">G1,SquadraA,SquadraB,SquadraC,SquadraD,SquadraE,SquadraF,SquadraG,SquadraH
+G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
+... (fino a G35)</div>
+        
+        <div class="input-group">
+            <textarea id="calendarInput" placeholder="G1,SquadraA,SquadraB,SquadraC,SquadraD,SquadraE,SquadraF,SquadraG,SquadraH
+G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
+... (fino a G35)"></textarea>
+        </div>
+
+        <button id="loadDataButton" class="btn">Carica e Valida i Dati</button>
+        
+        <div id="error-log"></div>
+    </div>
+
+    <div class="card">
+        <h2>3. Simula lo "Swap"</h2>
+        <p>Una volta caricati i dati, apparirà la classifica originale. Seleziona le due squadre da scambiare e ricalcola.</p>
+        
+        <div class="swap-controls">
+            <select id="team1Select" disabled>
+                <option value="">Seleziona squadra 1</option>
+            </select>
+            <div class="swap-icon">⇄</div>
+            <select id="team2Select" disabled>
+                <option value="">Seleziona squadra 2</option>
+            </select>
+        </div>
+        
+        <button id="calculateButton" class="btn" disabled>Simula Classifica con Swap</button>
+    </div>
+
+    <div class="results-container">
+        <div class="card">
+            <h3>Classifica Originale</h3>
+            <div id="originalTable"></div>
+        </div>
+        <div class="card">
+            <h3>Classifica Simulata (Post-Swap)</h3>
+            <div id="simulatedTable"></div>
+        </div>
+    </div>
+
+<script>
+        // Variabili globali per memorizzare i dati parsati
+        let parsedScores = {};
+        let parsedCalendar = [];
+        let teamNames = [];
+        const NUM_TEAMS = 8;
+        const NUM_ROUNDS = 35;
+
+        // Aggiungi gli "ascoltatori" agli eventi
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('loadDataButton').addEventListener('click', loadAndValidateData);
+            document.getElementById('calculateButton').addEventListener('click', runSwapSimulation);
+        });
+
+        /**
+         * Funzione 1: Carica, valida e processa i dati dalle textarea.
+         */
+        function loadAndValidateData() {
+            const scoresText = document.getElementById('scoresInput').value.trim();
+            const calendarText = document.getElementById('calendarInput').value.trim();
+            const errorLog = document.getElementById('error-log');
+            errorLog.textContent = ''; // Resetta errori
+            errorLog.style.display = 'none';
+
+            try {
+                // 1. Parsing Punteggi
+                parsedScores = {};
+                teamNames = [];
+                const scoreLines = scoresText.split('\n');
+                if (scoreLines.length !== NUM_TEAMS) throw new Error(`Errore Punteggi: Trovate ${scoreLines.length} squadre, ma ne servono ${NUM_TEAMS}.`);
+                
+                scoreLines.forEach((line, index) => {
+                    const parts = line.split(',');
+                    const name = parts.shift().trim();
+                    if (!name) throw new Error(`Errore Punteggi: Nome squadra mancante alla riga ${index + 1}.`);
+                    
+                    if (parts.length !== NUM_ROUNDS) throw new Error(`Errore Punteggi [${name}]: Trovati ${parts.length} punteggi, ma ne servono ${NUM_ROUNDS}.`);
+                    
+                    parsedScores[name] = parts.map(p => parseFloat(p));
+                    teamNames.push(name);
+                });
+
+                // 2. Parsing Calendario
+                parsedCalendar = [];
+                const calendarLines = calendarText.split('\n');
+                if (calendarLines.length !== NUM_ROUNDS) throw new Error(`Errore Calendario: Trovate ${calendarLines.length} giornate, ma ne servono ${NUM_ROUNDS}.`);
+
+                calendarLines.forEach((line, index) => {
+                    const parts = line.split(',');
+                    const giornataLabel = parts.shift().trim(); // Rimuove G1, G2, etc.
+                    
+                    if (parts.length !== NUM_TEAMS) throw new Error(`Errore Calendario [${giornataLabel}]: Trovate ${parts.length} squadre, ma ne servono ${NUM_TEAMS} (4 partite).`);
+                    
+                    const round = [];
+                    for (let i = 0; i < parts.length; i += 2) {
+                        const casa = parts[i].trim();
+                        const ospite = parts[i+1].trim();
+                        
+                        // Validazione nomi calendario
+                        if (!teamNames.includes(casa)) throw new Error(`Errore Calendario [${giornataLabel}]: Squadra "${casa}" non trovata nell'elenco punteggi.`);
+                        if (!teamNames.includes(ospite)) throw new Error(`Errore Calendario [${giornataLabel}]: Squadra "${ospite}" non trovata nell'elenco punteggi.`);
+
+                        round.push({ casa: casa, ospite: ospite });
+                    }
+                    parsedCalendar.push(round);
+                });
+                
+                // 3. Se tutto OK, popola i selettori e calcola l'originale
+                populateSelectors();
+                
+                const originalClassifica = runFullSeason(parsedCalendar, parsedScores);
+                renderTable(originalClassifica, 'originalTable');
+                
+                // Pulisci la tabella simulata e attiva i controlli
+                document.getElementById('simulatedTable').innerHTML = '';
+                document.getElementById('calculateButton').disabled = false;
+                document.getElementById('team1Select').disabled = false;
+                document.getElementById('team2Select').disabled = false;
+                
+            } catch (error) {
+                // Se qualcosa va male, mostra l'errore
+                errorLog.textContent = error.message;
+                errorLog.style.display = 'block';
+                document.getElementById('calculateButton').disabled = true;
+                document.getElementById('team1Select').disabled = true;
+                document.getElementById('team2Select').disabled = true;
+            }
+        }
+
+        /**
+         * Funzione 2: Popola i menu a tendina per lo swap.
+         */
+        function populateSelectors() {
+            const sel1 = document.getElementById('team1Select');
+            const sel2 = document.getElementById('team2Select');
+            sel1.innerHTML = '';
+            sel2.innerHTML = '';
+
+            teamNames.forEach((team, index) => {
+                const opt1 = document.createElement('option');
+                opt1.value = team;
+                opt1.textContent = team;
+                sel1.appendChild(opt1);
+
+                const opt2 = document.createElement('option');
+                opt2.value = team;
+                opt2.textContent = team;
+                sel2.appendChild(opt2);
+            });
+            
+            // Pre-seleziona la seconda squadra per evitare che siano uguali
+            if (teamNames.length > 1) {
+                sel2.selectedIndex = 1;
+            }
+        }
+
+        /**
+         * Funzione 3: Esegue la simulazione con lo swap.
+         */
+        function runSwapSimulation() {
+            const team1 = document.getElementById('team1Select').value;
+            const team2 = document.getElementById('team2Select').value;
+            const errorLog = document.getElementById('error-log');
+
+            if (team1 === team2) {
+                errorLog.textContent = "Errore: Devi selezionare due squadre diverse da scambiare.";
+                errorLog.style.display = 'block';
+                return;
+            }
+            errorLog.textContent = '';
+            errorLog.style.display = 'none';
+
+            // 1. Crea il calendario swappato
+            const swappedCalendar = createSwappedCalendar(parsedCalendar, team1, team2);
+
+            // 2. Simula la stagione con il nuovo calendario
+            const simulatedClassifica = runFullSeason(swappedCalendar, parsedScores);
+
+            // 3. Mostra la tabella
+            renderTable(simulatedClassifica, 'simulatedTable');
+        }
+
+        // --- FUNZIONI DI SUPPORTO ---
+
+        /**
+         * CORRETTA: Calcola i goal in base ai punti.
+         * 66+ punti = 1 goal, 72+ = 2 goal, 78+ = 3 goal, etc.
+         * Se punteggio = 0, la partita non è stata giocata
+         */
+        function calcolaGoal(punti) {
+            if (punti === 0) return 0; // Partita non giocata
+            if (punti < 66) return 0;
+            
+            // Calcola correttamente: 66 = 1 gol, 72 = 2 gol, 78 = 3 gol, etc.
+            // Sottrai 66 per trovare quanti "blocchi da 6 punti" oltre il primo gol
+            return 1 + Math.floor((punti - 66) / 6);
+        }
+
+        /**
+         * CORRETTA: Calcola il risultato di una partita
+         * Se entrambi i punteggi sono 0, la partita non è stata giocata
+         */
+        function calcolaPartita(puntiCasa, puntiOspite) {
+            // Se entrambi i punteggi sono 0, la partita non è stata giocata
+            if (puntiCasa === 0 && puntiOspite === 0) {
+                return { 
+                    casa: { pts: 0, gf: 0, ga: 0 }, 
+                    ospite: { pts: 0, gf: 0, ga: 0 } 
+                };
+            }
+
+            const goalCasa = calcolaGoal(puntiCasa);
+            const goalOspite = calcolaGoal(puntiOspite);
+
+            if (goalCasa > goalOspite) {
+                return { 
+                    casa: { pts: 3, gf: goalCasa, ga: goalOspite }, 
+                    ospite: { pts: 0, gf: goalOspite, ga: goalCasa } 
+                };
+            } else if (goalCasa < goalOspite) {
+                return { 
+                    casa: { pts: 0, gf: goalCasa, ga: goalOspite }, 
+                    ospite: { pts: 3, gf: goalOspite, ga: goalCasa } 
+                };
+            } else {
+                // Pareggio
+                return { 
+                    casa: { pts: 1, gf: goalCasa, ga: goalOspite }, 
+                    ospite: { pts: 1, gf: goalOspite, ga: goalCasa } 
+                };
+            }
+        }
+
+        /**
+         * CORRETTA: Motore di simulazione
+         */
+        function runFullSeason(calendar, scores) {
+            // Inizializza la classifica
+            const classifica = {};
+            teamNames.forEach(team => { 
+                classifica[team] = { pts: 0, gf: 0, ga: 0 }; 
+            });
+
+            // Itera su tutte le 35 giornate
+            calendar.forEach((round, index) => {
+                const giornata = index;
+
+                // Itera sulle 4 partite della giornata
+                round.forEach(match => {
+                    const { casa, ospite } = match;
+
+                    // Prendi i punteggi REALI di quella giornata
+                    const puntiCasa = scores[casa][giornata];
+                    const puntiOspite = scores[ospite][giornata];
+
+                    // Calcola il risultato (pts, gf, ga)
+                    const result = calcolaPartita(puntiCasa, puntiOspite);
+
+                    // Aggiorna la classifica
+                    classifica[casa].pts += result.casa.pts;
+                    classifica[casa].gf += result.casa.gf;
+                    classifica[casa].ga += result.casa.ga;
+
+                    classifica[ospite].pts += result.ospite.pts;
+                    classifica[ospite].gf += result.ospite.gf;
+                    classifica[ospite].ga += result.ospite.ga;
+                });
+            });
+
+            return classifica;
+        }
+
+        /**
+         * Crea una copia "profonda" del calendario scambiando team1 e team2.
+         */
+        function createSwappedCalendar(originalCalendar, team1, team2) {
+            const swappedCalendar = JSON.parse(JSON.stringify(originalCalendar));
+
+            swappedCalendar.forEach(round => {
+                round.forEach(match => {
+                    // Controlla e swappa la squadra in casa
+                    if (match.casa === team1) {
+                        match.casa = team2;
+                    } else if (match.casa === team2) {
+                        match.casa = team1;
+                    }
+
+                    // Controlla e swappa la squadra in trasferta
+                    if (match.ospite === team1) {
+                        match.ospite = team2;
+                    } else if (match.ospite === team2) {
+                        match.ospite = team1;
+                    }
+                });
+            });
+
+            return swappedCalendar;
+        }
+
+        /**
+         * CORRETTA: Disegna la tabella HTML della classifica
+         */
+        function renderTable(classifica, elementId) {
+            const container = document.getElementById(elementId);
+
+            // Ordina la classifica: 1. Punti (decrescente) 2. DR (decrescente) 3. GF (decrescente)
+            const sorted = Object.entries(classifica).sort(([, statsA], [, statsB]) => {
+                // 1. Ordina per Punti
+                if (statsB.pts !== statsA.pts) {
+                    return statsB.pts - statsA.pts;
+                }
+                // 2. Se Punti uguali, ordina per Differenza Reti (DR)
+                const drA = statsA.gf - statsA.ga;
+                const drB = statsB.gf - statsB.ga;
+                if (drB !== drA) {
+                    return drB - drA;
+                }
+                // 3. Se DR uguale, ordina per Goal Fatti (GF)
+                return statsB.gf - statsA.gf;
+            });
+
+            let html = '<table>';
+            html += '<tr><th>Pos</th><th>Squadra</th><th>Punti</th><th>GF</th><th>GS</th><th>DR</th></tr>';
+            
+            sorted.forEach((entry, index) => {
+                const [teamName, stats] = entry;
+                const dr = stats.gf - stats.ga;
+                
+                html += `<tr>
+                            <td>${index + 1}</td>
+                            <td>${teamName}</td>
+                            <td>${stats.pts}</td>
+                            <td>${stats.gf}</td>
+                            <td>${stats.ga}</td>
+                            <td>${dr}</td>
+                         </tr>`;
+            });
+
+            html += '</table>';
+            container.innerHTML = html;
+        }
+
+    </script>
+
+</body>
+</html>
