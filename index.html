@@ -30,10 +30,10 @@
 
     <div class="card">
         <h2>1. Inserisci i Punteggi (8 Squadre)</h2>
-        <p>Incolla i punteggi (35 per squadra). <strong>Formato (CSV):</strong> <code>NomeSquadra,puntiG1,puntiG2,puntiG3...</code><br>
+        <p>Incolla i punteggi (36 per squadra). <strong>Formato (CSV):</strong> <code>NomeSquadra,puntiG1,puntiG2,puntiG3...</code><br>
            Assicurati che non ci siano spazi vuoti e che i decimali usino il punto (es. <code>68.5</code>).</p>
         
-        <div class="code-example">SquadraA,70.5,65.0,78.0, ... (altri 32 punteggi)
+        <div class="code-example">SquadraA,70.5,65.0,78.0, ... (altri punteggi)
 SquadraB,68.0,72.0,66.0, ...
 SquadraC,60.0,71.5,73.0, ...
 SquadraD,75.0,66.5,69.0, ...
@@ -43,7 +43,7 @@ SquadraG,66.0,67.0,73.5, ...
 SquadraH,69.5,70.0,71.0, ...</div>
         
         <div class="input-group">
-            <textarea id="scoresInput" placeholder="SquadraA,70.5,65.0,78.0, ... (altri 32 punteggi)
+            <textarea id="scoresInput" placeholder="SquadraA,70.5,65.0,78.0, ... (altri punteggi)
 SquadraB,68.0,72.0,66.0, ...
 SquadraC,60.0,71.5,73.0, ...
 SquadraD,75.0,66.5,69.0, ...
@@ -53,18 +53,18 @@ SquadraG,66.0,67.0,73.5, ...
 SquadraH,69.5,70.0,71.0, ..."></textarea>
         </div>
 
-        <h2>2. Inserisci il Calendario (35 Giornate)</h2>
+        <h2>2. Inserisci il Calendario (36 Giornate)</h2>
         <p>Incolla il calendario (4 partite per giornata). <strong>Formato (CSV):</strong> <code>G1,Casa1,Ospite1,Casa2,Ospite2,Casa3,Ospite3,Casa4,Ospite4</code><br>
            I nomi delle squadre devono corrispondere *esattamente* a quelli usati sopra.</p>
         
         <div class="code-example">G1,SquadraA,SquadraB,SquadraC,SquadraD,SquadraE,SquadraF,SquadraG,SquadraH
 G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
-... (fino a G35)</div>
+... (fino a G36)</div>
         
         <div class="input-group">
             <textarea id="calendarInput" placeholder="G1,SquadraA,SquadraB,SquadraC,SquadraD,SquadraE,SquadraF,SquadraG,SquadraH
 G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
-... (fino a G35)"></textarea>
+... (fino a G36)"></textarea>
         </div>
 
         <button id="loadDataButton" class="btn">Carica e Valida i Dati</button>
@@ -106,7 +106,7 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
         let parsedCalendar = [];
         let teamNames = [];
         const NUM_TEAMS = 8;
-        const NUM_ROUNDS = 35;
+        const NUM_ROUNDS = 36;
 
         // Aggiungi gli "ascoltatori" agli eventi
         document.addEventListener('DOMContentLoaded', () => {
@@ -303,7 +303,7 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
                 classifica[team] = { pts: 0, gf: 0, ga: 0 }; 
             });
 
-            // Itera su tutte le 35 giornate
+            // Itera su tutte le 36 giornate
             calendar.forEach((round, index) => {
                 const giornata = index;
 
