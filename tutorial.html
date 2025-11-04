@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial - Come Ottenere i Dati | Calcolatore "What If" Fantacalcio</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --background-color: #0f172a;
+            --card-background: #1e293b;
+            --text-color: #f8fafc;
+            --border-color: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            padding: 0;
+            margin: 0;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .tutorial-step {
+            background-color: var(--card-background);
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .step-number {
+            background-color: var(--primary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-right: 1rem;
+        }
+
+        .step-title {
+            font-size: 1.5rem;
+            color: var(--text-color);
+        }
+
+        .step-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .step-text {
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        .step-image {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background: #2d3748;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            color: #a0aec0;
+        }
+
+        .step-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 6px;
+        }
+
+        .arrow {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            z-index: 10;
+        }
+
+        .arrow-text {
+            position: absolute;
+            background-color: rgba(255, 59, 48, 0.9);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-secondary {
+            background-color: #475569;
+        }
+
+        .btn-secondary:hover {
+            background-color: #334155;
+        }
+
+        .highlight-box {
+            background: rgba(37, 99, 235, 0.1);
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .code-example {
+            background: #1a2536;
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: monospace;
+            margin: 1rem 0;
+            border: 1px solid var(--border-color);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #94a3b8;
+            margin-top: 3rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .placeholder-text {
+            text-align: center;
+            padding: 2rem;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .step-content {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Tutorial: Come Ottenere i Dati</h1>
+        <p class="subtitle">Guida passo-passo per estrarre i punteggi e il calendario dal sito Fantacalcio</p>
+    </header>
+
+    <div class="container">
+        <div class="tutorial-step">
+            <div class="step-header">
+                <div class="step-number">1</div>
+                <h2 class="step-title">Accedi alla Tua Lega</h2>
+            </div>
+            <div class="step-content">
+                <div class="step-text">
+                    <p>Vai sul sito <strong>leghe.fantacalcio.it</strong> e accedi alla tua lega.</p>
+                    <p>L'URL sarà simile a:</p>
+                    <div class="code-example">https://leghe.fantacalcio.it/nome-della-tua-lega</div>
+                    <div class="highlight-box">
+                        <strong>Nota:</strong> Assicurati di essere loggato con il tuo account Fantacalcio per poter
+                        accedere ai dati della lega.
+                    </div>
+                </div>
+                <div class="step-image">
+                    <div class="placeholder-text">
+                        <img src="images/screen1.png" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tutorial-step">
+            <div class="step-header">
+                <div class="step-number">2</div>
+                <h2 class="step-title">Vai alla Sezione Calendario</h2>
+            </div>
+            <div class="step-content">
+                <div class="step-text">
+                    <p>Una volta nella pagina della tua lega, clicca sulla voce <strong>"Calendario"</strong> nel menu.
+                    </p>
+                    <p>Questo ti porterà alla pagina:</p>
+                    <div class="code-example">https://leghe.fantacalcio.it/nome-della-tua-lega/calendario</div>
+                    <p>Qui vedrai il calendario completo della tua lega con tutti gli scontri.</p>
+                </div>
+                <div class="step-image">
+                    <div class="placeholder-text">
+                        <img src="images/screen2.png" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tutorial-step">
+            <div class="step-header">
+                <div class="step-number">3</div>
+                <h2 class="step-title">Scarica il File Excel</h2>
+            </div>
+            <div class="step-content">
+                <div class="step-text">
+                    <p>Nella pagina del calendario, cerca il pulsante <strong>"SCARICA ORA"</strong>.</p>
+                    <p>Cliccando su questo pulsante, scaricherai un file Excel contenente:</p>
+                    <ul>
+                        <li>Tutte le giornate del campionato</li>
+                        <li>I punteggi di ogni squadra per ogni giornata</li>
+                        <li>Il calendario completo degli scontri</li>
+                    </ul>
+                    <div class="highlight-box">
+                        <strong>Importante:</strong> Il file Excel contiene tutti i dati di cui hai bisogno purtroppo
+                        non nel formato
+                        organizzato.
+                    </div>
+                </div>
+                <div class="step-image">
+                    <div class="placeholder-text">
+                        <img src="images/screen3.png" alt="">
+                    </div>
+                    <div class="arrow" style="top: 70%; right: 30px;">
+                        <div class="arrow-text" style="top: -30px; right: 40px;">Pulsante "SCARICA ORA"</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tutorial-step">
+            <div class="step-header">
+                <div class="step-number">4</div>
+                <h2 class="step-title">Altra Opzione: Usa la Pagina Calendario sul sito</h2>
+            </div>
+            <div class="step-content">
+                <div class="step-text">
+                    <p>Se preferisci non scaricare il file Excel, puoi ottenere i dati direttamente dalla pagina del
+                        calendario sul sito Fantacalcio.</p>
+                    <p><strong>Procedura alternativa:</strong></p>
+                    <ol>
+                        <li>Resta sulla pagina <strong>Calendario</strong> del tuo lega</li>
+                        <li>Scorri verso il basso per vedere tutte le giornate</li>
+                        <li>Per ogni giornata, prendi nota di:
+                            <ul>
+                                <li>Nomi delle squadre che si affrontano</li>
+                                <li>Punteggi di ogni squadra</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    <p>Dovrai organizzare manualmente i dati nel formato richiesto:</p>
+                    <div class="code-example">NomeSquadra,puntiG1,puntiG2,puntiG3,...</div>
+                    <div class="highlight-box">
+                        <strong>Nota:</strong> Questo metodo richiede più tempo ma è utile se non puoi/vuoi scaricare il
+                        file Excel.
+                    </div>
+                </div>
+                <div class="step-image">
+                    <div class="placeholder-text">
+                        <img src="images/screen3.png" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tutorial-step">
+            <div class="step-header">
+                <div class="step-number">5</div>
+                <h2 class="step-title">Consiglio: Usa l'IA per Convertire i Dati</h2>
+            </div>
+            <div class="step-content">
+                <div class="step-text">
+                    <p>Per risparmiare tempo, puoi utilizzare strumenti di IA come <strong>Gemini</strong>,
+                        <strong>ChatGPT</strong> o altri assistenti per convertire automaticamente i tuoi screenshot nel
+                        formato CSV richiesto.</p>
+
+                    <p><strong>Come procedere:</strong></p>
+                    <ol>
+                        <li>Fai screenshot della pagina con i punteggi e il calendario</li>
+                        <li>Carica le immagini su un assistente IA</li>
+                        <li>Chiedi di convertire i dati in formato CSV con questo prompt:</li>
+                    </ol>
+
+                    <div class="code-example">
+                        "Converti questi screenshot in formato CSV per il calcolatore Fantacalcio.
+
+                        Per i PUNTEGGI (8 squadre, 36 giornate):
+                        NomeSquadra,puntiG1,puntiG2,puntiG3,...
+
+                        Per il CALENDARIO (36 giornate, 4 partite per giornata):
+                        G1,Casa1,Ospite1,Casa2,Ospite2,Casa3,Ospite3,Casa4,Ospite4
+
+                        Assicurati che i nomi delle squadre siano identici in entrambi i file."
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>Vantaggio:</strong> L'IA può estrarre e formattare automaticamente tutti i dati,
+                        risparmiandoti il lavoro manuale di copia e incolla!
+                    </div>
+                </div>
+                <div class="step-image">
+                    <div class="placeholder-text">
+                        <img src="images/screen4.png" alt="">
+                    </div>
+                    <div class="placeholder-text">
+                        <img src="images/screen5.png" alt="">
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="navigation">
+            <a href="index.html" class="btn btn-secondary">← Torna al Calcolatore</a>
+        </div>
+    </div>
+
+    <footer>
+        <p>Fatto da Fabio Rovituso</p>
+    </footer>
+</body>
+
+</html>
