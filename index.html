@@ -138,12 +138,10 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
     </footer>
 
     <script>
-        // Global variables to store parsed data
+        // Variabili globali
         let parsedScores = {};
         let parsedCalendar = [];
         let teamNames = [];
-
-        // Dynamic variables
         let CURRENT_NUM_TEAMS = 8;
         let CURRENT_NUM_ROUNDS = 36;
 
@@ -170,20 +168,15 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
                 const scoreLines = scoresText.split('\n').filter(line => line.trim() !== '');
 
                 if (scoreLines.length !== CURRENT_NUM_TEAMS) {
-                    throw new Error(`Errore Punteggi: Trovate ${scoreLines.length} squadre, ma ne hai impostate ${CURRENT_NUM_TEAMS}.`);
+                    throw new Error(`Errore Punteggi: Trovate ${scoreLines.length} squadre, ma caricate ${CURRENT_NUM_TEAMS}.`);
                 }
 
-                scoreLines.forEach((line, index) => {
+                scoreLines.forEach((line) => {
                     const parts = line.split(',').map(p => p.trim()).filter(p => p !== "");
-                    if (parts.length === 0) return;
-
-                    const name = parts.shift(); // First element is the name
-                    if (!name) throw new Error(`Errore Punteggi: Nome squadra mancante alla riga ${index + 1}.`);
-
+                    const name = parts.shift();
                     if (parts.length !== CURRENT_NUM_ROUNDS) {
-                        throw new Error(`Errore [${name}]: Trovati ${parts.length} punteggi, ma ne servono ${CURRENT_NUM_ROUNDS}.`);
+                        throw new Error(`Errore [${name}]: Servono ${CURRENT_NUM_ROUNDS} punteggi.`);
                     }
-
                     parsedScores[name] = parts.map(p => parseFloat(p));
                     teamNames.push(name);
                 });
@@ -193,112 +186,120 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
                 const calendarLines = calendarText.split('\n').filter(line => line.trim() !== '');
 
                 if (calendarLines.length !== CURRENT_NUM_ROUNDS) {
-                    throw new Error(`Errore Calendario: Trovate ${calendarLines.length} giornate, ma ne hai impostate ${CURRENT_NUM_ROUNDS}.`);
+                    throw new Error(`Errore Calendario: Servono ${CURRENT_NUM_ROUNDS} giornate.`);
                 }
 
-                calendarLines.forEach((line, index) => {
-                    // Split and trim all parts immediately to avoid 'undefined' issues
+                calendarLines.forEach((line) => {
                     const parts = line.split(',').map(p => p.trim()).filter(p => p !== "");
+                    const giornataLabel = parts.shift(); // G1, G2...
 
-                    if (parts.length === 0) return;
-
-                    const giornataLabel = parts.shift(); // Remove G1, G2, etc.
-
+                    // Validazione: la riga deve contenere esattamente CURRENT_NUM_TEAMS nomi
                     if (parts.length !== CURRENT_NUM_TEAMS) {
-                        throw new Error(`Errore Calendario [${giornataLabel}]: Trovate ${parts.length} squadre, ma ne servono ${CURRENT_NUM_TEAMS}.`);
+                        throw new Error(`Errore [${giornataLabel}]: Trovate ${parts.length} squadre. Ogni riga deve contenere tutte le ${CURRENT_NUM_TEAMS} squadre.`);
                     }
 
-                    const round = [];
-                    for (let i = 0; i < parts.length; i += 2) {
+                    const roundMatches = [];
+                    // Itera a coppie. Se dispari (es. 9), l'ultimo (indice 8) verrà ignorato dal ciclo i+2 < 9
+                    for (let i = 0; i + 1 < parts.length; i += 2) {
                         const casa = parts[i];
                         const ospite = parts[i + 1];
 
-                        if (!casa || !ospite) {
-                            throw new Error(`Errore Calendario [${giornataLabel}]: Partita incompleta rilevata.`);
+                        if (!teamNames.includes(casa) || !teamNames.includes(ospite)) {
+                            throw new Error(`Errore [${giornataLabel}]: Una delle squadre ("${casa}" o "${ospite}") non esiste nell'elenco punteggi.`);
                         }
-
-                        if (!teamNames.includes(casa)) throw new Error(`Errore [${giornataLabel}]: "${casa}" non trovata nei punteggi.`);
-                        if (!teamNames.includes(ospite)) throw new Error(`Errore [${giornataLabel}]: "${ospite}" non trovata nei punteggi.`);
-
-                        round.push({ casa, ospite });
+                        roundMatches.push({ casa, ospite });
                     }
-                    parsedCalendar.push(round);
+
+                    // Memorizziamo anche chi riposa (se dispari è l'ultimo elemento)
+                    const riposa = (CURRENT_NUM_TEAMS % 2 !== 0) ? parts[parts.length - 1] : null;
+
+                    parsedCalendar.push({ matches: roundMatches, riposa: riposa });
                 });
 
-                // 3. Success
+                // 3. Render Iniziale
                 populateSelectors();
-                const originalClassifica = runFullSeason(parsedCalendar, parsedScores);
-                renderTable(originalClassifica, 'originalTable');
-
-                document.getElementById('simulatedTable').innerHTML = '';
+                renderTable(runFullSeason(parsedCalendar, parsedScores), 'originalTable');
                 document.getElementById('calculateButton').disabled = false;
                 document.getElementById('team1Select').disabled = false;
                 document.getElementById('team2Select').disabled = false;
+                // Aggiungi questo sotto l'abilitazione dei select
+                document.querySelectorAll('.step')[1].classList.add('active');
 
             } catch (error) {
-                console.error(error);
                 errorLog.textContent = error.message;
                 errorLog.style.display = 'block';
             }
         }
 
-        // --- KEEP ALL OTHER FUNCTIONS (populateSelectors, runFullSeason, etc.) FROM PREVIOUS VERSION ---
-
-        function populateSelectors() {
-            const sel1 = document.getElementById('team1Select');
-            const sel2 = document.getElementById('team2Select');
-            sel1.innerHTML = ''; sel2.innerHTML = '';
-            teamNames.forEach(team => {
-                const opt1 = document.createElement('option'); opt1.value = team; opt1.textContent = team;
-                sel1.appendChild(opt1);
-                const opt2 = document.createElement('option'); opt2.value = team; opt2.textContent = team;
-                sel2.appendChild(opt2);
-            });
-            if (teamNames.length > 1) sel2.selectedIndex = 1;
-        }
-
-        function runSwapSimulation() {
-            const team1 = document.getElementById('team1Select').value;
-            const team2 = document.getElementById('team2Select').value;
-            if (team1 === team2) return;
-            const swappedCalendar = createSwappedCalendar(parsedCalendar, team1, team2);
-            const simulatedClassifica = runFullSeason(swappedCalendar, parsedScores);
-            renderTable(simulatedClassifica, 'simulatedTable');
-        }
-
         function calcolaGoal(punti) {
-            if (punti === 0 || punti < 66) return 0;
+            if (punti < 66) return 0;
             return 1 + Math.floor((punti - 66) / 6);
-        }
-
-        function calcolaPartita(pCasa, pOspite) {
-            if (pCasa === 0 && pOspite === 0) return { casa: { pts: 0, gf: 0, ga: 0 }, ospite: { pts: 0, gf: 0, ga: 0 } };
-            const gC = calcolaGoal(pCasa); const gO = calcolaGoal(pOspite);
-            if (gC > gO) return { casa: { pts: 3, gf: gC, ga: gO }, ospite: { pts: 0, gf: gO, ga: gC } };
-            if (gC < gO) return { casa: { pts: 0, gf: gC, ga: gO }, ospite: { pts: 3, gf: gO, ga: gC } };
-            return { casa: { pts: 1, gf: gC, ga: gO }, ospite: { pts: 1, gf: gO, ga: gC } };
         }
 
         function runFullSeason(calendar, scores) {
             const classifica = {};
-            teamNames.forEach(t => classifica[t] = { pts: 0, gf: 0, ga: 0 });
-            calendar.forEach((round, idx) => {
-                round.forEach(m => {
-                    const res = calcolaPartita(scores[m.casa][idx], scores[m.ospite][idx]);
-                    classifica[m.casa].pts += res.casa.pts; classifica[m.casa].gf += res.casa.gf; classifica[m.casa].ga += res.casa.ga;
-                    classifica[m.ospite].pts += res.ospite.pts; classifica[m.ospite].gf += res.ospite.gf; classifica[m.ospite].ga += res.ospite.ga;
+            teamNames.forEach(t => classifica[t] = { pts: 0, gf: 0, ga: 0, giocate: 0 });
+
+            calendar.forEach((roundData, idx) => {
+                roundData.matches.forEach(m => {
+                    const pCasa = scores[m.casa][idx];
+                    const pOspite = scores[m.ospite][idx];
+
+                    const gC = calcolaGoal(pCasa);
+                    const gO = calcolaGoal(pOspite);
+
+                    classifica[m.casa].gf += gC;
+                    classifica[m.casa].ga += gO;
+                    classifica[m.casa].giocate += 1;
+
+                    classifica[m.ospite].gf += gO;
+                    classifica[m.ospite].ga += gC;
+                    classifica[m.ospite].giocate += 1;
+
+                    if (gC > gO) classifica[m.casa].pts += 3;
+                    else if (gC < gO) classifica[m.ospite].pts += 3;
+                    else {
+                        classifica[m.casa].pts += 1;
+                        classifica[m.ospite].pts += 1;
+                    }
                 });
             });
             return classifica;
         }
 
         function createSwappedCalendar(orig, t1, t2) {
+            // Copia profonda per non sporcare l'originale
             const swp = JSON.parse(JSON.stringify(orig));
-            swp.forEach(r => r.forEach(m => {
-                if (m.casa === t1) m.casa = t2; else if (m.casa === t2) m.casa = t1;
-                if (m.ospite === t1) m.ospite = t2; else if (m.ospite === t2) m.ospite = t1;
-            }));
+            swp.forEach(roundData => {
+                // Scambia nei match
+                roundData.matches.forEach(m => {
+                    if (m.casa === t1) m.casa = t2; else if (m.casa === t2) m.casa = t1;
+                    if (m.ospite === t1) m.ospite = t2; else if (m.ospite === t2) m.ospite = t1;
+                });
+                // Scambia la squadra che riposa
+                if (roundData.riposa === t1) roundData.riposa = t2;
+                else if (roundData.riposa === t2) roundData.riposa = t1;
+            });
             return swp;
+        }
+
+        function runSwapSimulation() {
+            const t1 = document.getElementById('team1Select').value;
+            const t2 = document.getElementById('team2Select').value;
+            if (t1 === t2) return;
+            const simulated = runFullSeason(createSwappedCalendar(parsedCalendar, t1, t2), parsedScores);
+            renderTable(simulated, 'simulatedTable');
+        }
+
+        function populateSelectors() {
+            const sel1 = document.getElementById('team1Select');
+            const sel2 = document.getElementById('team2Select');
+            sel1.innerHTML = ''; sel2.innerHTML = '';
+            teamNames.forEach(t => {
+                const o1 = document.createElement('option'); o1.value = t; o1.textContent = t; sel1.appendChild(o1);
+                const o2 = document.createElement('option'); o2.value = t; o2.textContent = t; sel2.appendChild(o2);
+            });
+            if (teamNames.length > 1) sel2.selectedIndex = 1;
         }
 
         function renderTable(classifica, elementId) {
@@ -308,9 +309,11 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
                 const drA = a.gf - a.ga; const drB = b.gf - b.ga;
                 return drB !== drA ? drB - drA : b.gf - a.gf;
             });
-            let h = '<table><tr><th>Pos</th><th>Squadra</th><th>Pts</th><th>GF</th><th>GS</th><th>DR</th></tr>';
+
+            let h = '<table><tr><th>Pos</th><th>Squadra</th><th>G</th><th>Pts</th><th>GF</th><th>GS</th><th>DR</th></tr>';
             sorted.forEach((e, i) => {
-                h += `<tr><td>${i + 1}</td><td>${e[0]}</td><td>${e[1].pts}</td><td>${e[1].gf}</td><td>${e[1].ga}</td><td>${e[1].gf - e[1].ga}</td></tr>`;
+                const [name, s] = e;
+                h += `<tr><td>${i + 1}</td><td>${name}</td><td>${s.giocate}</td><td><b>${s.pts}</b></td><td>${s.gf}</td><td>${s.ga}</td><td>${s.gf - s.ga}</td></tr>`;
             });
             container.innerHTML = h + '</table>';
         }

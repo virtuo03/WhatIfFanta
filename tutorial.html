@@ -326,6 +326,12 @@
                         <strong>Nota:</strong> Questo metodo richiede più tempo ma è utile se non puoi/vuoi scaricare il
                         file Excel.
                     </div>
+                    <div class="highlight-box" style="border-left-color: var(--warning-color, #f59e0b);">
+                        <strong>💡 Lega con squadre dispari?</strong>
+                        Se la tua lega ha ad esempio 9 squadre, nel calendario per ogni giornata dovrai inserire 9 nomi:
+                        i primi 8 formano le 4 partite, il 9° (l'ultimo della riga) sarà considerato automaticamente in
+                        riposo.
+                    </div>
                 </div>
                 <div class="step-image">
                     <div class="placeholder-text">
@@ -357,15 +363,18 @@
                     <div class="code-example">
                         "Converti questi screenshot in formato CSV per il calcolatore Fantacalcio.
 
-                        Per i PUNTEGGI (8 squadre, 36 giornate):
-                        NomeSquadra,puntiG1,puntiG2,puntiG3,...
+                        Per i PUNTEGGI:
+                        Formato: NomeSquadra,puntiG1,puntiG2,puntiG3... (una riga per ogni squadra)
 
-                        Per il CALENDARIO (36 giornate, 4 partite per giornata):
-                        G1,Casa1,Ospite1,Casa2,Ospite2,Casa3,Ospite3,Casa4,Ospite4
+                        Per il CALENDARIO:
+                        Formato: G1,Casa1,Ospite1,Casa2,Ospite2... (una riga per ogni giornata)
+                        Nota: Se il numero di squadre è dispari, l'ultimo nome della riga deve essere la squadra che
+                        riposa.
 
                         Assicurati che:
-                        - I nomi delle squadre siano identici in entrambi i file
-                        - Se non c'è risultato per una giornata, mettere 0 punti"
+                        - I nomi delle squadre siano identici in entrambi i blocchi.
+                        - Usa il punto per i decimali (es. 72.5).
+                        - Se una giornata non è stata giocata, metti 0."
                     </div>
 
                     <div class="highlight-box">
