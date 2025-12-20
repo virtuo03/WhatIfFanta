@@ -32,6 +32,27 @@
     </div>
 
     <div class="card">
+        <div class="config-grid"
+            style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border);">
+            <div class="input-group">
+                <label for="numTeams" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Numero Squadre
+                    (5-10)</label>
+                <select id="numTeams">
+                    <option value="5">5 Squadre</option>
+                    <option value="6">6 Squadre</option>
+                    <option value="7">7 Squadre</option>
+                    <option value="8" selected>8 Squadre</option>
+                    <option value="9">9 Squadre</option>
+                    <option value="10">10 Squadre</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="numRounds" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Numero Giornate
+                    (20-38)</label>
+                <input type="number" id="numRounds" value="36" min="20" max="38"
+                    style="width: 100%; padding: 0.875rem; border-radius: var(--radius-sm); background: var(--surface); color: white; border: 2px solid var(--border);">
+            </div>
+        </div>
         <h2>1. Inserisci i Punteggi (8 Squadre)</h2>
         <p>Incolla i punteggi (36 per squadra). <strong>Formato (CSV):</strong>
             <code>NomeSquadra,puntiG1,puntiG2,puntiG3...</code><br>
@@ -117,42 +138,51 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
     </footer>
 
     <script>
-        // Variabili globali per memorizzare i dati parsati
+        // Global variables to store parsed data
         let parsedScores = {};
         let parsedCalendar = [];
         let teamNames = [];
-        const NUM_TEAMS = 8;
-        const NUM_ROUNDS = 36;
 
-        // Aggiungi gli "ascoltatori" agli eventi
+        // Dynamic variables
+        let CURRENT_NUM_TEAMS = 8;
+        let CURRENT_NUM_ROUNDS = 36;
+
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('loadDataButton').addEventListener('click', loadAndValidateData);
             document.getElementById('calculateButton').addEventListener('click', runSwapSimulation);
         });
 
-        /**
-         * Funzione 1: Carica, valida e processa i dati dalle textarea.
-         */
         function loadAndValidateData() {
+            CURRENT_NUM_TEAMS = parseInt(document.getElementById('numTeams').value);
+            CURRENT_NUM_ROUNDS = parseInt(document.getElementById('numRounds').value);
+
             const scoresText = document.getElementById('scoresInput').value.trim();
             const calendarText = document.getElementById('calendarInput').value.trim();
             const errorLog = document.getElementById('error-log');
-            errorLog.textContent = ''; // Resetta errori
+
+            errorLog.textContent = '';
             errorLog.style.display = 'none';
 
             try {
                 // 1. Parsing Punteggi
                 parsedScores = {};
                 teamNames = [];
-                const scoreLines = scoresText.split('\n');
-                if (scoreLines.length !== NUM_TEAMS) throw new Error(`Errore Punteggi: Trovate ${scoreLines.length} squadre, ma ne servono ${NUM_TEAMS}.`);
+                const scoreLines = scoresText.split('\n').filter(line => line.trim() !== '');
+
+                if (scoreLines.length !== CURRENT_NUM_TEAMS) {
+                    throw new Error(`Errore Punteggi: Trovate ${scoreLines.length} squadre, ma ne hai impostate ${CURRENT_NUM_TEAMS}.`);
+                }
 
                 scoreLines.forEach((line, index) => {
-                    const parts = line.split(',');
-                    const name = parts.shift().trim();
+                    const parts = line.split(',').map(p => p.trim()).filter(p => p !== "");
+                    if (parts.length === 0) return;
+
+                    const name = parts.shift(); // First element is the name
                     if (!name) throw new Error(`Errore Punteggi: Nome squadra mancante alla riga ${index + 1}.`);
 
-                    if (parts.length !== NUM_ROUNDS) throw new Error(`Errore Punteggi [${name}]: Trovati ${parts.length} punteggi, ma ne servono ${NUM_ROUNDS}.`);
+                    if (parts.length !== CURRENT_NUM_ROUNDS) {
+                        throw new Error(`Errore [${name}]: Trovati ${parts.length} punteggi, ma ne servono ${CURRENT_NUM_ROUNDS}.`);
+                    }
 
                     parsedScores[name] = parts.map(p => parseFloat(p));
                     teamNames.push(name);
@@ -160,262 +190,129 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
 
                 // 2. Parsing Calendario
                 parsedCalendar = [];
-                const calendarLines = calendarText.split('\n');
-                if (calendarLines.length !== NUM_ROUNDS) throw new Error(`Errore Calendario: Trovate ${calendarLines.length} giornate, ma ne servono ${NUM_ROUNDS}.`);
+                const calendarLines = calendarText.split('\n').filter(line => line.trim() !== '');
+
+                if (calendarLines.length !== CURRENT_NUM_ROUNDS) {
+                    throw new Error(`Errore Calendario: Trovate ${calendarLines.length} giornate, ma ne hai impostate ${CURRENT_NUM_ROUNDS}.`);
+                }
 
                 calendarLines.forEach((line, index) => {
-                    const parts = line.split(',');
-                    const giornataLabel = parts.shift().trim(); // Rimuove G1, G2, etc.
+                    // Split and trim all parts immediately to avoid 'undefined' issues
+                    const parts = line.split(',').map(p => p.trim()).filter(p => p !== "");
 
-                    if (parts.length !== NUM_TEAMS) throw new Error(`Errore Calendario [${giornataLabel}]: Trovate ${parts.length} squadre, ma ne servono ${NUM_TEAMS} (4 partite).`);
+                    if (parts.length === 0) return;
+
+                    const giornataLabel = parts.shift(); // Remove G1, G2, etc.
+
+                    if (parts.length !== CURRENT_NUM_TEAMS) {
+                        throw new Error(`Errore Calendario [${giornataLabel}]: Trovate ${parts.length} squadre, ma ne servono ${CURRENT_NUM_TEAMS}.`);
+                    }
 
                     const round = [];
                     for (let i = 0; i < parts.length; i += 2) {
-                        const casa = parts[i].trim();
-                        const ospite = parts[i + 1].trim();
+                        const casa = parts[i];
+                        const ospite = parts[i + 1];
 
-                        // Validazione nomi calendario
-                        if (!teamNames.includes(casa)) throw new Error(`Errore Calendario [${giornataLabel}]: Squadra "${casa}" non trovata nell'elenco punteggi.`);
-                        if (!teamNames.includes(ospite)) throw new Error(`Errore Calendario [${giornataLabel}]: Squadra "${ospite}" non trovata nell'elenco punteggi.`);
+                        if (!casa || !ospite) {
+                            throw new Error(`Errore Calendario [${giornataLabel}]: Partita incompleta rilevata.`);
+                        }
 
-                        round.push({ casa: casa, ospite: ospite });
+                        if (!teamNames.includes(casa)) throw new Error(`Errore [${giornataLabel}]: "${casa}" non trovata nei punteggi.`);
+                        if (!teamNames.includes(ospite)) throw new Error(`Errore [${giornataLabel}]: "${ospite}" non trovata nei punteggi.`);
+
+                        round.push({ casa, ospite });
                     }
                     parsedCalendar.push(round);
                 });
 
-                // 3. Se tutto OK, popola i selettori e calcola l'originale
+                // 3. Success
                 populateSelectors();
-
                 const originalClassifica = runFullSeason(parsedCalendar, parsedScores);
                 renderTable(originalClassifica, 'originalTable');
 
-                // Pulisci la tabella simulata e attiva i controlli
                 document.getElementById('simulatedTable').innerHTML = '';
                 document.getElementById('calculateButton').disabled = false;
                 document.getElementById('team1Select').disabled = false;
                 document.getElementById('team2Select').disabled = false;
 
             } catch (error) {
-                // Se qualcosa va male, mostra l'errore
+                console.error(error);
                 errorLog.textContent = error.message;
                 errorLog.style.display = 'block';
-                document.getElementById('calculateButton').disabled = true;
-                document.getElementById('team1Select').disabled = true;
-                document.getElementById('team2Select').disabled = true;
             }
         }
 
-        /**
-         * Funzione 2: Popola i menu a tendina per lo swap.
-         */
+        // --- KEEP ALL OTHER FUNCTIONS (populateSelectors, runFullSeason, etc.) FROM PREVIOUS VERSION ---
+
         function populateSelectors() {
             const sel1 = document.getElementById('team1Select');
             const sel2 = document.getElementById('team2Select');
-            sel1.innerHTML = '';
-            sel2.innerHTML = '';
-
-            teamNames.forEach((team, index) => {
-                const opt1 = document.createElement('option');
-                opt1.value = team;
-                opt1.textContent = team;
+            sel1.innerHTML = ''; sel2.innerHTML = '';
+            teamNames.forEach(team => {
+                const opt1 = document.createElement('option'); opt1.value = team; opt1.textContent = team;
                 sel1.appendChild(opt1);
-
-                const opt2 = document.createElement('option');
-                opt2.value = team;
-                opt2.textContent = team;
+                const opt2 = document.createElement('option'); opt2.value = team; opt2.textContent = team;
                 sel2.appendChild(opt2);
             });
-
-            // Pre-seleziona la seconda squadra per evitare che siano uguali
-            if (teamNames.length > 1) {
-                sel2.selectedIndex = 1;
-            }
+            if (teamNames.length > 1) sel2.selectedIndex = 1;
         }
 
-        /**
-         * Funzione 3: Esegue la simulazione con lo swap.
-         */
         function runSwapSimulation() {
             const team1 = document.getElementById('team1Select').value;
             const team2 = document.getElementById('team2Select').value;
-            const errorLog = document.getElementById('error-log');
-
-            if (team1 === team2) {
-                errorLog.textContent = "Errore: Devi selezionare due squadre diverse da scambiare.";
-                errorLog.style.display = 'block';
-                return;
-            }
-            errorLog.textContent = '';
-            errorLog.style.display = 'none';
-
-            // 1. Crea il calendario swappato
+            if (team1 === team2) return;
             const swappedCalendar = createSwappedCalendar(parsedCalendar, team1, team2);
-
-            // 2. Simula la stagione con il nuovo calendario
             const simulatedClassifica = runFullSeason(swappedCalendar, parsedScores);
-
-            // 3. Mostra la tabella
             renderTable(simulatedClassifica, 'simulatedTable');
         }
 
-        // --- FUNZIONI DI SUPPORTO ---
-
-        /**
-         * CORRETTA: Calcola i goal in base ai punti.
-         * 66+ punti = 1 goal, 72+ = 2 goal, 78+ = 3 goal, etc.
-         * Se punteggio = 0, la partita non è stata giocata
-         */
         function calcolaGoal(punti) {
-            if (punti === 0) return 0; // Partita non giocata
-            if (punti < 66) return 0;
-
-            // Calcola correttamente: 66 = 1 gol, 72 = 2 gol, 78 = 3 gol, etc.
-            // Sottrai 66 per trovare quanti "blocchi da 6 punti" oltre il primo gol
+            if (punti === 0 || punti < 66) return 0;
             return 1 + Math.floor((punti - 66) / 6);
         }
 
-        /**
-         * CORRETTA: Calcola il risultato di una partita
-         * Se entrambi i punteggi sono 0, la partita non è stata giocata
-         */
-        function calcolaPartita(puntiCasa, puntiOspite) {
-            // Se entrambi i punteggi sono 0, la partita non è stata giocata
-            if (puntiCasa === 0 && puntiOspite === 0) {
-                return {
-                    casa: { pts: 0, gf: 0, ga: 0 },
-                    ospite: { pts: 0, gf: 0, ga: 0 }
-                };
-            }
-
-            const goalCasa = calcolaGoal(puntiCasa);
-            const goalOspite = calcolaGoal(puntiOspite);
-
-            if (goalCasa > goalOspite) {
-                return {
-                    casa: { pts: 3, gf: goalCasa, ga: goalOspite },
-                    ospite: { pts: 0, gf: goalOspite, ga: goalCasa }
-                };
-            } else if (goalCasa < goalOspite) {
-                return {
-                    casa: { pts: 0, gf: goalCasa, ga: goalOspite },
-                    ospite: { pts: 3, gf: goalOspite, ga: goalCasa }
-                };
-            } else {
-                // Pareggio
-                return {
-                    casa: { pts: 1, gf: goalCasa, ga: goalOspite },
-                    ospite: { pts: 1, gf: goalOspite, ga: goalCasa }
-                };
-            }
+        function calcolaPartita(pCasa, pOspite) {
+            if (pCasa === 0 && pOspite === 0) return { casa: { pts: 0, gf: 0, ga: 0 }, ospite: { pts: 0, gf: 0, ga: 0 } };
+            const gC = calcolaGoal(pCasa); const gO = calcolaGoal(pOspite);
+            if (gC > gO) return { casa: { pts: 3, gf: gC, ga: gO }, ospite: { pts: 0, gf: gO, ga: gC } };
+            if (gC < gO) return { casa: { pts: 0, gf: gC, ga: gO }, ospite: { pts: 3, gf: gO, ga: gC } };
+            return { casa: { pts: 1, gf: gC, ga: gO }, ospite: { pts: 1, gf: gO, ga: gC } };
         }
 
-        /**
-         * CORRETTA: Motore di simulazione
-         */
         function runFullSeason(calendar, scores) {
-            // Inizializza la classifica
             const classifica = {};
-            teamNames.forEach(team => {
-                classifica[team] = { pts: 0, gf: 0, ga: 0 };
-            });
-
-            // Itera su tutte le 36 giornate
-            calendar.forEach((round, index) => {
-                const giornata = index;
-
-                // Itera sulle 4 partite della giornata
-                round.forEach(match => {
-                    const { casa, ospite } = match;
-
-                    // Prendi i punteggi REALI di quella giornata
-                    const puntiCasa = scores[casa][giornata];
-                    const puntiOspite = scores[ospite][giornata];
-
-                    // Calcola il risultato (pts, gf, ga)
-                    const result = calcolaPartita(puntiCasa, puntiOspite);
-
-                    // Aggiorna la classifica
-                    classifica[casa].pts += result.casa.pts;
-                    classifica[casa].gf += result.casa.gf;
-                    classifica[casa].ga += result.casa.ga;
-
-                    classifica[ospite].pts += result.ospite.pts;
-                    classifica[ospite].gf += result.ospite.gf;
-                    classifica[ospite].ga += result.ospite.ga;
+            teamNames.forEach(t => classifica[t] = { pts: 0, gf: 0, ga: 0 });
+            calendar.forEach((round, idx) => {
+                round.forEach(m => {
+                    const res = calcolaPartita(scores[m.casa][idx], scores[m.ospite][idx]);
+                    classifica[m.casa].pts += res.casa.pts; classifica[m.casa].gf += res.casa.gf; classifica[m.casa].ga += res.casa.ga;
+                    classifica[m.ospite].pts += res.ospite.pts; classifica[m.ospite].gf += res.ospite.gf; classifica[m.ospite].ga += res.ospite.ga;
                 });
             });
-
             return classifica;
         }
 
-        /**
-         * Crea una copia "profonda" del calendario scambiando team1 e team2.
-         */
-        function createSwappedCalendar(originalCalendar, team1, team2) {
-            const swappedCalendar = JSON.parse(JSON.stringify(originalCalendar));
-
-            swappedCalendar.forEach(round => {
-                round.forEach(match => {
-                    // Controlla e swappa la squadra in casa
-                    if (match.casa === team1) {
-                        match.casa = team2;
-                    } else if (match.casa === team2) {
-                        match.casa = team1;
-                    }
-
-                    // Controlla e swappa la squadra in trasferta
-                    if (match.ospite === team1) {
-                        match.ospite = team2;
-                    } else if (match.ospite === team2) {
-                        match.ospite = team1;
-                    }
-                });
-            });
-
-            return swappedCalendar;
+        function createSwappedCalendar(orig, t1, t2) {
+            const swp = JSON.parse(JSON.stringify(orig));
+            swp.forEach(r => r.forEach(m => {
+                if (m.casa === t1) m.casa = t2; else if (m.casa === t2) m.casa = t1;
+                if (m.ospite === t1) m.ospite = t2; else if (m.ospite === t2) m.ospite = t1;
+            }));
+            return swp;
         }
 
-        /**
-         * CORRETTA: Disegna la tabella HTML della classifica
-         */
         function renderTable(classifica, elementId) {
             const container = document.getElementById(elementId);
-
-            // Ordina la classifica: 1. Punti (decrescente) 2. DR (decrescente) 3. GF (decrescente)
-            const sorted = Object.entries(classifica).sort(([, statsA], [, statsB]) => {
-                // 1. Ordina per Punti
-                if (statsB.pts !== statsA.pts) {
-                    return statsB.pts - statsA.pts;
-                }
-                // 2. Se Punti uguali, ordina per Differenza Reti (DR)
-                const drA = statsA.gf - statsA.ga;
-                const drB = statsB.gf - statsB.ga;
-                if (drB !== drA) {
-                    return drB - drA;
-                }
-                // 3. Se DR uguale, ordina per Goal Fatti (GF)
-                return statsB.gf - statsA.gf;
+            const sorted = Object.entries(classifica).sort(([, a], [, b]) => {
+                if (b.pts !== a.pts) return b.pts - a.pts;
+                const drA = a.gf - a.ga; const drB = b.gf - b.ga;
+                return drB !== drA ? drB - drA : b.gf - a.gf;
             });
-
-            let html = '<table>';
-            html += '<tr><th>Pos</th><th>Squadra</th><th>Punti</th><th>GF</th><th>GS</th><th>DR</th></tr>';
-
-            sorted.forEach((entry, index) => {
-                const [teamName, stats] = entry;
-                const dr = stats.gf - stats.ga;
-
-                html += `<tr>
-                            <td>${index + 1}</td>
-                            <td>${teamName}</td>
-                            <td>${stats.pts}</td>
-                            <td>${stats.gf}</td>
-                            <td>${stats.ga}</td>
-                            <td>${dr}</td>
-                         </tr>`;
+            let h = '<table><tr><th>Pos</th><th>Squadra</th><th>Pts</th><th>GF</th><th>GS</th><th>DR</th></tr>';
+            sorted.forEach((e, i) => {
+                h += `<tr><td>${i + 1}</td><td>${e[0]}</td><td>${e[1].pts}</td><td>${e[1].gf}</td><td>${e[1].ga}</td><td>${e[1].gf - e[1].ga}</td></tr>`;
             });
-
-            html += '</table>';
-            container.innerHTML = html;
+            container.innerHTML = h + '</table>';
         }
 
     </script>
