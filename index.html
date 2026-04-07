@@ -245,6 +245,13 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
                     const pCasa = scores[m.casa][idx];
                     const pOspite = scores[m.ospite][idx];
 
+                    // --- FIX ---
+                    // Se i punteggi sono 0, la giornata non si è ancora giocata. 
+                    // Usiamo 'return' per saltare a questa partita senza assegnare punti.
+                    if (pCasa === 0 && pOspite === 0) {
+                        return;
+                    }
+
                     const gC = calcolaGoal(pCasa);
                     const gO = calcolaGoal(pOspite);
 
