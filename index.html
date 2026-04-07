@@ -293,7 +293,11 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
         function runSwapSimulation() {
             const t1 = document.getElementById('team1Select').value;
             const t2 = document.getElementById('team2Select').value;
-            if (t1 === t2) return;
+
+            if (t1 === t2) {
+                alert("Attenzione: Seleziona due squadre diverse per poter effettuare lo scambio.");
+                return;
+            }
             const simulated = runFullSeason(createSwappedCalendar(parsedCalendar, t1, t2), parsedScores);
             renderTable(simulated, 'simulatedTable');
         }
