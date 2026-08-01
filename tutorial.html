@@ -5,152 +5,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tutorial - Come Ottenere i Dati | Calcolatore "What If" Fantacalcio</title>
+    <link rel="stylesheet" href="styles/style.css">
     <style>
-        :root {
-            /* Serie A Vibes: Deep Navy, Bright Cyan, and Gold accents */
-            --background: #050B14;
-            --surface: #0D1829;
-            --surface-alt: #132238;
-            --text-primary: #F8FAFC;
-            --text-secondary: #94A3B8;
-            --text-muted: #64748B;
-            --border: #1E2E4A;
-            --border-light: #16243A;
-
-            /* Branding Colors */
-            --primary: #00B2E3;
-            /* Serie A Cyan */
-            --primary-dark: #0033A0;
-            /* Deep Royal Blue */
-            --primary-light: #38BDF8;
-
-            /* Utility Colors */
-            --secondary: #475569;
-            --success: #10B981;
-            --warning: #FACC15;
-            /* Scudetto Gold */
-            --error: #EF4444;
-
-            /* Shadows & Radii */
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
-            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
-            --radius: 16px;
-            --radius-sm: 8px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background: radial-gradient(circle at top center, #0D1829 0%, #050B14 100%);
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            line-height: 1.6;
-            color: var(--text-primary);
-            min-height: 100vh;
-            -webkit-text-size-adjust: 100%;
-        }
-
-        /* Header */
-        header {
-            text-align: center;
-            padding: 3rem 1rem 2rem;
-            margin-bottom: 2rem;
-            border-bottom: 1px solid var(--border-light);
-            background: rgba(13, 24, 41, 0.8);
-            backdrop-filter: blur(12px);
-        }
-
-        h1 {
-            font-size: clamp(2rem, 6vw, 3rem);
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: -0.02em;
-            background: linear-gradient(135deg, #FFFFFF 0%, var(--primary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.75rem;
-            line-height: 1.1;
-            text-shadow: 0 4px 24px rgba(0, 178, 227, 0.2);
-        }
-
-        .subtitle {
-            color: var(--text-secondary);
-            font-size: clamp(1rem, 3vw, 1.125rem);
-            max-width: 800px;
-            margin: 0 auto;
-            font-weight: 400;
-        }
-
+        /* Pagina 2 — estensioni locali alla gabbia editoriale condivisa */
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1rem;
+            padding: 0 0.25rem;
         }
 
-        /* Tutorial Steps */
         .tutorial-step {
-            background: rgba(13, 24, 41, 0.7);
-            backdrop-filter: blur(12px);
+            background: var(--card);
             border-radius: var(--radius);
             padding: clamp(1.5rem, 4vw, 2.5rem);
-            margin-bottom: 2.5rem;
-            box-shadow: var(--shadow-md);
-            border: 1px solid var(--border-light);
-            transition: var(--transition);
-        }
-
-        .tutorial-step:hover {
-            border-color: var(--border);
-            box-shadow: var(--shadow-lg);
+            margin-bottom: 2.25rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--rule);
+            border-top: 3px solid var(--ink);
         }
 
         .step-header {
             display: flex;
-            align-items: center;
-            margin-bottom: 2rem;
-            gap: 1rem;
+            align-items: baseline;
+            margin-bottom: 1.5rem;
+            gap: 0.85rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--rule-strong);
         }
 
         .step-number {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 1.25rem;
-            box-shadow: 0 0 15px rgba(0, 178, 227, 0.4);
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            color: var(--red);
             flex-shrink: 0;
+            line-height: 1;
         }
 
         .step-title {
-            font-size: clamp(1.25rem, 4vw, 1.75rem);
-            font-weight: 800;
-            color: var(--text-primary);
+            font-family: var(--font-display);
+            font-size: clamp(1.35rem, 4vw, 1.9rem);
+            font-weight: 400;
+            color: var(--ink);
             text-transform: uppercase;
-            letter-spacing: -0.01em;
+            letter-spacing: 0.01em;
         }
 
         .step-content {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 3rem;
+            gap: 2.5rem;
             align-items: start;
         }
 
         .step-text {
             font-size: 1rem;
-            color: var(--text-secondary);
-            line-height: 1.7;
+            color: var(--ink-soft);
+            line-height: 1.75;
         }
 
         .step-text p {
@@ -159,62 +67,41 @@
 
         .step-text ul,
         .step-text ol {
-            margin-left: 1.5rem;
+            margin-left: 1.4rem;
             margin-bottom: 1.5rem;
-            color: var(--text-primary);
+            color: var(--ink);
         }
 
         .step-text li {
             margin-bottom: 0.5rem;
         }
 
-        /* Highlight Boxes */
+        .step-text strong {
+            color: var(--ink);
+        }
+
         .highlight-box {
-            background: rgba(0, 178, 227, 0.05);
-            border-left: 4px solid var(--primary);
-            padding: 1.25rem;
-            margin: 1.5rem 0;
+            background: var(--card-alt);
+            border-left: 3px solid var(--ink);
+            padding: 1.1rem 1.25rem;
+            margin: 1.4rem 0;
             border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-            color: var(--text-primary);
-            font-size: 0.95rem;
-            border-top: 1px solid rgba(0, 178, 227, 0.1);
-            border-right: 1px solid rgba(0, 178, 227, 0.1);
-            border-bottom: 1px solid rgba(0, 178, 227, 0.1);
+            color: var(--ink);
+            font-size: 0.92rem;
         }
 
-        /* Specific styling for the Warning highlight box */
-        .highlight-box[style*="warning-color"] {
-            border-left-color: var(--warning) !important;
-            background: rgba(250, 204, 21, 0.05) !important;
-            border-top: 1px solid rgba(250, 204, 21, 0.1) !important;
-            border-right: 1px solid rgba(250, 204, 21, 0.1) !important;
-            border-bottom: 1px solid rgba(250, 204, 21, 0.1) !important;
+        .highlight-box.warn {
+            border-left-color: var(--gold);
+            background: var(--gold-light);
         }
 
-        /* Code Examples */
-        .code-example {
-            background: #0A101C;
-            color: #38BDF8;
-            padding: 1.25rem;
-            border-radius: var(--radius-sm);
-            overflow-x: auto;
-            font-family: 'Fira Code', 'Cascadia Code', monospace;
-            font-size: 0.85rem;
-            margin: 1.5rem 0;
-            border-left: 4px solid var(--primary-dark);
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
-            line-height: 1.5;
-            white-space: pre-wrap;
-        }
-
-        /* Image Display */
         .step-image {
             position: relative;
             border-radius: var(--radius-sm);
             overflow: hidden;
-            box-shadow: var(--shadow-md);
-            background: #0A101C;
-            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            background: var(--ink);
+            border: 1px solid var(--rule-strong);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -225,14 +112,12 @@
             width: 100%;
             height: auto;
             display: block;
-            border-radius: calc(var(--radius-sm) - 1px);
         }
 
         .placeholder-text {
             width: 100%;
         }
 
-        /* Arrows for images */
         .arrow {
             position: absolute;
             width: 60px;
@@ -242,79 +127,34 @@
 
         .arrow-text {
             position: absolute;
-            background: var(--error);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            font-size: 0.85rem;
+            background: var(--red);
+            color: var(--card);
+            padding: 0.45rem 0.9rem;
+            border-radius: 3px;
+            font-family: var(--font-label);
+            font-size: 0.78rem;
             font-weight: 700;
             white-space: nowrap;
-            box-shadow: var(--shadow);
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
 
-        /* Navigation Buttons */
         .navigation {
             display: flex;
             justify-content: center;
             margin: 3rem 0;
         }
 
-        .btn {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            border: none;
-            padding: 1rem 2rem;
-            border-radius: var(--radius-sm);
-            font-size: 1rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            cursor: pointer;
-            transition: var(--transition);
+        .navigation .btn {
+            width: auto;
+            min-width: 260px;
             text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: var(--shadow-md);
-            min-height: 54px;
         }
 
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px -4px rgba(0, 178, 227, 0.5);
-            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-dark) 100%);
-        }
-
-        .btn-secondary {
-            background: var(--surface-alt);
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-            box-shadow: none;
-        }
-
-        .btn-secondary:hover {
-            background: var(--border-light);
-            box-shadow: var(--shadow);
-            transform: translateY(-2px);
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: var(--text-muted);
-            border-top: 1px solid var(--border-light);
-            font-size: 0.9rem;
-            margin-top: 4rem;
-        }
-
-        /* Responsive Design */
         @media (max-width: 992px) {
             .step-content {
                 grid-template-columns: 1fr;
-                gap: 2rem;
+                gap: 1.75rem;
             }
 
             .step-image {
@@ -337,14 +177,20 @@
 
 <body>
     <header>
-        <h1>Tutorial: Come Ottenere i Dati</h1>
-        <p class="subtitle">Guida passo-passo per estrarre i punteggi e il calendario dal sito Fantacalcio</p>
+        <div class="masthead-bar">
+            <span>Edizione Digitale</span>
+            <span>Pagina 2 di 2</span>
+        </div>
+        <hr class="masthead-rule">
+        <h1>Tutorial<br>Come Ottenere <em>i Dati</em></h1>
+        <hr class="masthead-rule thin">
+        <p class="subtitle">Guida passo-passo per estrarre i punteggi e il calendario dal sito Fantacalcio.</p>
     </header>
 
     <div class="container">
         <div class="tutorial-step">
             <div class="step-header">
-                <div class="step-number">1</div>
+                <span class="step-number">01</span>
                 <h2 class="step-title">Accedi alla Tua Lega</h2>
             </div>
             <div class="step-content">
@@ -367,7 +213,7 @@
 
         <div class="tutorial-step">
             <div class="step-header">
-                <div class="step-number">2</div>
+                <span class="step-number">02</span>
                 <h2 class="step-title">Vai alla Sezione Calendario</h2>
             </div>
             <div class="step-content">
@@ -388,7 +234,7 @@
 
         <div class="tutorial-step">
             <div class="step-header">
-                <div class="step-number">3</div>
+                <span class="step-number">03</span>
                 <h2 class="step-title">Scarica il File Excel</h2>
             </div>
             <div class="step-content">
@@ -402,8 +248,7 @@
                     </ul>
                     <div class="highlight-box">
                         <strong>Importante:</strong> Il file Excel contiene tutti i dati di cui hai bisogno purtroppo
-                        non nel formato
-                        organizzato.
+                        non nel formato organizzato.
                     </div>
                 </div>
                 <div class="step-image">
@@ -419,7 +264,7 @@
 
         <div class="tutorial-step">
             <div class="step-header">
-                <div class="step-number">4</div>
+                <span class="step-number">04</span>
                 <h2 class="step-title">Altra Opzione: Usa la Pagina Calendario sul sito</h2>
             </div>
             <div class="step-content">
@@ -443,7 +288,7 @@
                         <strong>Nota:</strong> Questo metodo richiede più tempo ma è utile se non puoi/vuoi scaricare il
                         file Excel.
                     </div>
-                    <div class="highlight-box" style="border-left-color: var(--warning-color, #f59e0b);">
+                    <div class="highlight-box warn">
                         <strong>💡 Lega con squadre dispari?</strong>
                         Se la tua lega ha ad esempio 9 squadre, nel calendario per ogni giornata dovrai inserire 9 nomi:
                         i primi 8 formano le 4 partite, il 9° (l'ultimo della riga) sarà considerato automaticamente in
@@ -460,7 +305,7 @@
 
         <div class="tutorial-step">
             <div class="step-header">
-                <div class="step-number">5</div>
+                <span class="step-number">05</span>
                 <h2 class="step-title">Consiglio: Usa l'IA per Convertire i Dati</h2>
             </div>
             <div class="step-content">
@@ -477,8 +322,7 @@
                         <li>Chiedi di convertire i dati in formato CSV con questo prompt:</li>
                     </ol>
 
-                    <div class="code-example">
-                        "Converti questi screenshot in formato CSV per il calcolatore Fantacalcio.
+                    <div class="code-example">"Converti questi screenshot in formato CSV per il calcolatore Fantacalcio.
 
                         Per i PUNTEGGI:
                         Formato: NomeSquadra,puntiG1,puntiG2,puntiG3... (una riga per ogni squadra)
@@ -491,8 +335,7 @@
                         Assicurati che:
                         - I nomi delle squadre siano identici in entrambi i blocchi.
                         - Usa il punto per i decimali (es. 72.5).
-                        - Se una giornata non è stata giocata, metti 0."
-                    </div>
+                        - Se una giornata non è stata giocata, metti 0."</div>
 
                     <div class="highlight-box">
                         <strong>Vantaggio:</strong> L'IA può estrarre e formattare automaticamente tutti i dati,
@@ -506,7 +349,6 @@
                     <div class="placeholder-text">
                         <img src="images/screen5.png" alt="">
                     </div>
-
                 </div>
             </div>
         </div>
@@ -516,8 +358,8 @@
         </div>
     </div>
 
-    <footer>
-        <p>Fatto da Fabio Rovituso</p>
+    <footer class="site-footer">
+        <p class="credit">Fatto da Fabio Rovituso</p>
     </footer>
 </body>
 

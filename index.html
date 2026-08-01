@@ -11,32 +11,38 @@
 <body>
 
     <header>
-        <h1>Calcolatore "What If" Fantacalcio</h1>
+        <div class="masthead-bar">
+            <span>Edizione Digitale</span>
+            <span>Stagione Fantacalcistica</span>
+        </div>
+        <hr class="masthead-rule">
+        <h1>Calcolatore<br>"<em>What If</em>" Fantacalcio</h1>
+        <hr class="masthead-rule thin">
         <p class="subtitle">Scambia la posizione di due squadre nel calendario e scopri come sarebbe cambiata la
             classifica finale mantenendo gli stessi punteggi ma cambiando gli avversari.</p>
+        <div class="stamp">Simulazione<br>Esclusiva</div>
     </header>
 
     <div class="step-indicator">
         <div class="step active">
-            <div class="step-circle">1</div>
-            <div class="step-label">Inserisci Dati</div>
+            <span class="step-circle">I</span>
+            <span class="step-label">Inserisci Dati</span>
         </div>
         <div class="step">
-            <div class="step-circle">2</div>
-            <div class="step-label">Simula Swap</div>
+            <span class="step-circle">II</span>
+            <span class="step-label">Simula Swap</span>
         </div>
         <div class="step">
-            <div class="step-circle">3</div>
-            <div class="step-label">Risultati</div>
+            <span class="step-circle">III</span>
+            <span class="step-label">Risultati</span>
         </div>
     </div>
 
     <div class="card">
         <div class="config-grid"
-            style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border);">
+            style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; padding-bottom: 1.5rem;">
             <div class="input-group">
-                <label for="numTeams" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Numero Squadre
-                    (5-10)</label>
+                <label for="numTeams">Numero Squadre (5-10)</label>
                 <select id="numTeams">
                     <option value="5">5 Squadre</option>
                     <option value="6">6 Squadre</option>
@@ -47,13 +53,12 @@
                 </select>
             </div>
             <div class="input-group">
-                <label for="numRounds" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Numero Giornate
-                    (20-38)</label>
+                <label for="numRounds">Numero Giornate (20-38)</label>
                 <input type="number" id="numRounds" value="36" min="20" max="38"
-                    style="width: 100%; padding: 0.875rem; border-radius: var(--radius-sm); background: var(--surface); color: white; border: 2px solid var(--border);">
+                    style="width: 100%; padding: 0.9rem; border-radius: var(--radius-sm);">
             </div>
         </div>
-        <h2>1. Inserisci i Punteggi (8 Squadre)</h2>
+        <h2>I. Inserisci i Punteggi</h2>
         <p>Incolla i punteggi (36 per squadra). <strong>Formato (CSV):</strong>
             <code>NomeSquadra,puntiG1,puntiG2,puntiG3...</code><br>
             Assicurati che non ci siano spazi vuoti e che i decimali usino il punto (es. <code>68.5</code>).
@@ -79,7 +84,7 @@ SquadraG,66.0,67.0,73.5, ...
 SquadraH,69.5,70.0,71.0, ..."></textarea>
         </div>
 
-        <h2>2. Inserisci il Calendario (36 Giornate)</h2>
+        <h2>II. Inserisci il Calendario</h2>
         <p>Incolla il calendario (4 partite per giornata). <strong>Formato (CSV):</strong>
             <code>G1,Casa1,Ospite1,Casa2,Ospite2,Casa3,Ospite3,Casa4,Ospite4</code><br>
             I nomi delle squadre devono corrispondere *esattamente* a quelli usati sopra.
@@ -101,7 +106,7 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
     </div>
 
     <div class="card">
-        <h2>3. Simula lo "Swap"</h2>
+        <h2>III. Simula lo "Swap"</h2>
         <p>Una volta caricati i dati, apparirà la classifica originale. Seleziona le due squadre da scambiare e
             ricalcola.</p>
 
@@ -124,16 +129,22 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
             <div id="originalTable"></div>
         </div>
         <div class="card">
-            <h3>Classifica Simulata (Post-Swap)</h3>
+            <h3>Classifica Simulata <span
+                    style="font-family: var(--font-label); font-size: 0.65rem; letter-spacing: 0.08em; color: var(--ink-faint); text-transform: none;">Post-Swap</span>
+            </h3>
+            <div class="table-legend" id="simulatedLegend" style="display:none;">
+                <span><span class="delta up">▲</span> risale</span>
+                <span><span class="delta down">▼</span> scende</span>
+                <span><span class="delta same">→</span> invariata</span>
+            </div>
             <div id="simulatedTable"></div>
         </div>
     </div>
 
-    <footer style="text-align: center; padding: 2rem; color: #999999; margin-top: 3rem; border-top: 1px solid #333333;">
-        <p style="font-size: 0.9rem; font-weight: 500;">Fatto da Fabio Rovituso</p>
-        <a href="tutorial.html"
-            style="color: #3b82f6; text-decoration: none; margin-top: 0.5rem; display: inline-block; font-weight: 500;">
-            📚 Come ottenere i dati dal Fantacalcio - Tutorial
+    <footer class="site-footer">
+        <p class="credit">Fatto da Fabio Rovituso</p>
+        <a href="tutorial.html" class="tutorial-link">
+            📚 Continua a pag. 2 — Come ottenere i dati dal Fantacalcio
         </a>
     </footer>
 
@@ -144,6 +155,8 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
         let teamNames = [];
         let CURRENT_NUM_TEAMS = 8;
         let CURRENT_NUM_ROUNDS = 36;
+        let originalOrder = [];
+        let lastSwapTeams = [];
 
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('loadDataButton').addEventListener('click', loadAndValidateData);
@@ -159,6 +172,7 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
             const errorLog = document.getElementById('error-log');
 
             errorLog.textContent = '';
+            errorLog.classList.remove('show');
             errorLog.style.display = 'none';
 
             try {
@@ -218,16 +232,16 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
 
                 // 3. Render Iniziale
                 populateSelectors();
-                renderTable(runFullSeason(parsedCalendar, parsedScores), 'originalTable');
+                originalOrder = renderTable(runFullSeason(parsedCalendar, parsedScores), 'originalTable');
                 document.getElementById('calculateButton').disabled = false;
                 document.getElementById('team1Select').disabled = false;
                 document.getElementById('team2Select').disabled = false;
-                // Aggiungi questo sotto l'abilitazione dei select
                 document.querySelectorAll('.step')[1].classList.add('active');
 
             } catch (error) {
                 errorLog.textContent = error.message;
                 errorLog.style.display = 'block';
+                errorLog.classList.add('show');
             }
         }
 
@@ -298,8 +312,11 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
                 alert("Attenzione: Seleziona due squadre diverse per poter effettuare lo scambio.");
                 return;
             }
+            lastSwapTeams = [t1, t2];
             const simulated = runFullSeason(createSwappedCalendar(parsedCalendar, t1, t2), parsedScores);
-            renderTable(simulated, 'simulatedTable');
+            renderTable(simulated, 'simulatedTable', originalOrder, lastSwapTeams);
+            document.getElementById('simulatedLegend').style.display = 'flex';
+            document.querySelectorAll('.step')[2].classList.add('active');
         }
 
         function populateSelectors() {
@@ -313,7 +330,9 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
             if (teamNames.length > 1) sel2.selectedIndex = 1;
         }
 
-        function renderTable(classifica, elementId) {
+        // previousOrder: array di nomi squadra ordinati per posizione nella classifica originale (opzionale)
+        // swapTeams: [t1, t2] per evidenziare le righe scambiate (opzionale)
+        function renderTable(classifica, elementId, previousOrder, swapTeams) {
             const container = document.getElementById(elementId);
             const sorted = Object.entries(classifica).sort(([, a], [, b]) => {
                 if (b.pts !== a.pts) return b.pts - a.pts;
@@ -321,12 +340,31 @@ G2,SquadraB,SquadraC,SquadraD,SquadraA,SquadraF,SquadraG,SquadraH,SquadraE
                 return drB !== drA ? drB - drA : b.gf - a.gf;
             });
 
-            let h = '<table><tr><th>Pos</th><th>Squadra</th><th>G</th><th>Pts</th><th>GF</th><th>GS</th><th>DR</th></tr>';
+            let h = '<div class="table-wrap"><table><tr><th>Pos</th>' +
+                (previousOrder ? '<th>Var</th>' : '') +
+                '<th>Squadra</th><th>G</th><th>Pts</th><th>GF</th><th>GS</th><th>DR</th></tr>';
+
             sorted.forEach((e, i) => {
                 const [name, s] = e;
-                h += `<tr><td>${i + 1}</td><td>${name}</td><td>${s.giocate}</td><td><b>${s.pts}</b></td><td>${s.gf}</td><td>${s.ga}</td><td>${s.gf - s.ga}</td></tr>`;
+                const rowClasses = [];
+                if (i === 0) rowClasses.push('pos-1');
+                if (swapTeams && swapTeams.includes(name)) rowClasses.push('row-swapped');
+
+                let deltaCell = '';
+                if (previousOrder) {
+                    const prevPos = previousOrder.indexOf(name) + 1;
+                    const newPos = i + 1;
+                    const diff = prevPos - newPos;
+                    if (diff > 0) deltaCell = `<td><span class="delta up">▲ ${diff}</span></td>`;
+                    else if (diff < 0) deltaCell = `<td><span class="delta down">▼ ${Math.abs(diff)}</span></td>`;
+                    else deltaCell = `<td><span class="delta same">→</span></td>`;
+                }
+
+                h += `<tr class="${rowClasses.join(' ')}"><td>${i + 1}</td>${deltaCell}<td class="td-team">${name}</td><td>${s.giocate}</td><td class="td-pts">${s.pts}</td><td>${s.gf}</td><td>${s.ga}</td><td>${s.gf - s.ga}</td></tr>`;
             });
-            container.innerHTML = h + '</table>';
+            container.innerHTML = h + '</table></div>';
+
+            return sorted.map(([name]) => name);
         }
 
     </script>
